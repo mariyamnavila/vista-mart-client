@@ -15,6 +15,7 @@ const Home = () => {
     const [maxPrice, setMaxPrice] = useState("");
     const [loading, setLoading] = useState(false);
     const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [filterOpen, setFilterOpen] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -107,7 +108,8 @@ const Home = () => {
                     </div>
                 </div>
 
-                <div className="flex gap-8">
+                <div className="flex-col lg:flex-row gap-8">
+
                     {/* Sidebar Filters */}
                     <aside className="hidden lg:block w-56 shrink-0">
                         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sticky top-24 space-y-5">
@@ -174,7 +176,17 @@ const Home = () => {
                                 </div>
                             )}
                         </div>
+
                     </aside>
+
+                    <div className="lg:hidden mb-4">
+                        <button
+                            onClick={() => setFilterOpen(true)}
+                            className="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-semibold"
+                        >
+                            Open Filters
+                        </button>
+                    </div>
 
                     {/* Main Content */}
                     <main className="flex-1 min-w-0">
@@ -223,6 +235,93 @@ const Home = () => {
 
                         <Pagination page={page} totalPages={totalPages} setPage={setPage} />
                     </main>
+
+                    {filterOpen && (
+                        <div className="fixed inset-0 z-50 flex">
+                            {/* Background overlay */}
+                            <div
+                                className="absolute inset-0 bg-black/40"
+                                onClick={() => setFilterOpen(false)}
+                            />
+
+                            {/* Drawer */}
+                            <div className="relative ml-auto w-72 bg-white h-full p-5 overflow-y-auto shadow-xl">
+
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="font-bold">Filters</h3>
+                                    <button
+                                        onClick={() => setFilterOpen(false)}
+                                        className="text-gray-500"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+
+                                {/* Brand, Category, Price, Clear button */}
+                                <div className="flex items-center justify-between">
+                                    {hasActiveFilters && (
+                                        <button
+                                            onClick={clearFilters}
+                                            className="text-xs text-indigo-600 font-semibold hover:text-indigo-800 transition-colors"
+                                        >
+                                            Clear all
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Brand</label>
+                                    <select value={brand} onChange={(e) => { setBrand(e.target.value); setPage(1); }} className={selectClass} style={chevronStyle}>
+                                        <option value="">All Brands</option>
+                                        {["Apple", "Samsung", "Dell", "HP", "Asus", "Sony", "Lenovo", "Xiaomi"].map(b => (
+                                            <option key={b} value={b}>{b}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</label>
+                                    <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1); }} className={selectClass} style={chevronStyle}>
+                                        <option value="">All Categories</option>
+                                        {["Mobile", "Laptop", "Audio", "Camera", "Wearable", "Accessories"].map(c => (
+                                            <option key={c} value={c}>{c}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Price Range</label>
+                                    <input
+                                        type="number"
+                                        placeholder="Min $"
+                                        value={minPrice}
+                                        onChange={(e) => { setMinPrice(e.target.value); setPage(1); }}
+                                        className={inputClass}
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Max $"
+                                        value={maxPrice}
+                                        onChange={(e) => { setMaxPrice(e.target.value); setPage(1); }}
+                                        className={inputClass}
+                                    />
+                                </div>
+
+                                {/* Active filter tags */}
+                                {hasActiveFilters && (
+                                    <div className="pt-2 border-t border-gray-100 space-y-2">
+                                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active</p>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {brand && <Tag label={brand} onRemove={() => setBrand("")} />}
+                                            {category && <Tag label={category} onRemove={() => setCategory("")} />}
+                                            {minPrice && <Tag label={`≥$${minPrice}`} onRemove={() => setMinPrice("")} />}
+                                            {maxPrice && <Tag label={`≤$${maxPrice}`} onRemove={() => setMaxPrice("")} />}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
