@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import ProductCard from "../components/ProductCard";
-import Pagination from "../components/Pagination";
+import ProductCard from "./ProductCard";
+import Pagination from "./Pagination";
 
 const Home = () => {
     const [products, setProducts] = useState([]);
@@ -20,7 +20,7 @@ const Home = () => {
             setLoading(true);
             try {
                 const res = await axios.get(
-                    `http://localhost:3000/products?page=${page}&limit=9&search=${search}&sort=${sort}&brand=${brand}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}`
+                    `https://vista-mart-server.vercel.app/products?page=${page}&limit=9&search=${search}&sort=${sort}&brand=${brand}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}`
                 );
                 setProducts(res.data.products);
                 setTotalPages(res.data.totalPages);
