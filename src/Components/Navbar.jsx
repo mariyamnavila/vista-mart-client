@@ -1,16 +1,31 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
 import logo from '../assets/logo.png';
 import { HashLink } from "react-router-hash-link";
+import { AuthContext } from "../Context/AuthContext";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { user, logOut, setLoading, loading } = useContext(AuthContext)
 
     const linkClass = ({ isActive }) =>
         `relative text-sm font-semibold transition-colors duration-200 after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:rounded-full after:transition-all after:duration-300 ${isActive
             ? "text-indigo-600 after:w-full after:bg-indigo-600"
             : "text-gray-600 hover:text-indigo-600 after:w-0 hover:after:w-full after:bg-indigo-400"
         }`;
+
+    const handleLogOut = async () => {
+        try {
+            setLoading(true);
+            await logOut();
+            toast.success("Logged out successfully");
+        } catch (error) {
+            toast.error(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <nav className="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50 shadow-sm">
@@ -59,18 +74,50 @@ const Navbar = () => {
 
                         <div className="w-px h-6 bg-gray-200 mx-1" />
 
-                        <NavLink
-                            to="/login"
-                            className="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors duration-200"
-                        >
-                            Login
-                        </NavLink>
-                        <NavLink
-                            to="/register"
-                            className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 shadow-md shadow-indigo-200 hover:shadow-indigo-300 hover:scale-[1.02] active:scale-100 transition-all duration-200"
-                        >
-                            Sign Up
-                        </NavLink>
+                        {
+                            user ?
+                                <>
+                                    <div className="flex items-center gap-3">
+                                        {user?.photoURL && (
+                                            <img
+                                                src={user.photoURL}
+                                                alt="User"
+                                                className="w-8 h-8 rounded-full object-cover border"
+                                            />
+                                        )}
+
+                                        {user?.displayName && (
+                                            <span className="text-sm font-semibold text-gray-700">
+                                                {user.displayName}
+                                            </span>
+                                        )}
+
+                                        <button
+                                            onClick={handleLogOut}
+                                            disabled={loading}
+                                            className="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors disabled:opacity-50 hover:scale-[1.02] active:scale-100"
+                                        >
+                                            {loading ? "Logging out..." : "Log Out"}
+                                        </button>
+                                    </div>
+                                </>
+                                :
+                                <>
+                                    <NavLink
+                                        to="/login"
+                                        className="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors duration-200"
+                                    >
+                                        Login
+                                    </NavLink>
+                                    <NavLink
+                                        to="/register"
+                                        className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 shadow-md shadow-indigo-200 hover:shadow-indigo-300 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+                                    >
+                                        Sign Up
+                                    </NavLink>
+                                </>
+                        }
+
                     </div>
 
                     {/* Mobile hamburger */}
@@ -116,8 +163,35 @@ const Navbar = () => {
                         </NavLink>
                     ))}
                     <div className="pt-3 border-t border-gray-100 flex gap-2">
-                        <NavLink to="/login" onClick={() => setMenuOpen(false)} className="flex-1 text-center px-4 py-2.5 text-sm font-semibold text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors">Login</NavLink>
-                        <NavLink to="/register" onClick={() => setMenuOpen(false)} className="flex-1 text-center px-4 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors">Sign Up</NavLink>
+                        {user ? (
+                            <button
+                                onClick={() => {
+                                    handleLogOut();
+                                    setMenuOpen(false);
+                                }}
+                                className="w-full text-center px-4 py-2.5 text-sm font-semibold text-gray-600 border rounded-xl hover:bg-gray-50 transition-colors"
+                            >
+                                Log Out
+                            </button>
+                        ) : (
+                            <div className="flex gap-2">
+                                <NavLink
+                                    to="/login"
+                                    onClick={() => setMenuOpen(false)}
+                                    className="flex-1 text-center px-4 py-2.5 text-sm font-semibold text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors"
+                                >
+                                    Login
+                                </NavLink>
+
+                                <NavLink
+                                    to="/register"
+                                    onClick={() => setMenuOpen(false)}
+                                    className="flex-1 text-center px-4 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors"
+                                >
+                                    Sign Up
+                                </NavLink>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

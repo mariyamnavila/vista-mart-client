@@ -2,6 +2,7 @@ import { use, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 import toast from "react-hot-toast";
+import logo from '../assets/logo.png';
 
 const EyeIcon = ({ open }) => open ? (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,10 +79,10 @@ const Register = () => {
                         showToast(err.message, 'error')
                     })
                 showToast('Sign Up Successful', 'success')
-                
             })
             .catch((err) => {
                 showToast(err.message, 'error')
+                setLoading(false)
             })
     };
 
@@ -121,7 +122,7 @@ const Register = () => {
                     <div className="flex flex-col items-center mb-8">
                         <NavLink to="/" className="flex items-center gap-2.5 group mb-6">
                             <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200 group-hover:scale-105 transition-transform duration-200">
-                                <span className="text-white font-black text-base">S</span>
+                                 <img src={logo} alt='logo' />
                             </div>
                             <span className="text-2xl font-black text-gray-900 tracking-tight">
                                 Vista Mart<span className="text-indigo-600">.</span>

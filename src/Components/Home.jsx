@@ -14,13 +14,22 @@ const Home = () => {
     const [minPrice, setMinPrice] = useState("");
     const [maxPrice, setMaxPrice] = useState("");
     const [loading, setLoading] = useState(false);
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 500); // 500ms delay
+
+        return () => clearTimeout(timer);
+    }, [search]);
 
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
                 const res = await axios.get(
-                    `https://vista-mart-server.vercel.app/products?page=${page}&limit=9&search=${search}&sort=${sort}&brand=${brand}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}`
+                    `https://vista-mart-server.vercel.app/products?page=${page}&limit=9&search=${debouncedSearch}&sort=${sort}&brand=${brand}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}`
                 );
                 setProducts(res.data.products);
                 setTotalPages(res.data.totalPages);
@@ -31,7 +40,7 @@ const Home = () => {
             }
         };
         fetchProducts();
-    }, [page, search, sort, brand, category, minPrice, maxPrice]);
+    }, [page, debouncedSearch, sort, brand, category, minPrice, maxPrice]);
 
     const hasActiveFilters = brand || category || minPrice || maxPrice;
 
