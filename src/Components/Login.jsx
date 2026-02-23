@@ -1,22 +1,41 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { NavLink } from "react-router-dom";
 import logo from '../assets/logo.png';
+import { AuthContext } from "../Context/AuthContext";
+import toast from "react-hot-toast";
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-
+    const { setUser, signIn, setLoading, loading } = use(AuthContext)
     const handleChange = (e) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
+    const showToast = (message, type) => {
+        if (type === "success") {
+            toast.success(message);
+        } else {
+            toast.error(message);
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         console.log("Login form submitted:", formData);
-        // TODO: replace with your actual API call
-        setTimeout(() => setLoading(false), 1200);
+
+        signIn(formData.email, formData.password)
+            .then((result) => {
+                console.log(result);
+                setUser(result.user)
+                showToast('Login Successful', 'success')
+            })
+            .catch((err) => {
+                console.log(err);
+                showToast(err.message, 'error')
+            })
+
     };
 
     const inputClass =
@@ -171,15 +190,6 @@ const Login = () => {
                                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                             </svg>
                             Google
-                        </button>
-                        <button
-                            type="button"
-                            className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm"
-                        >
-                            <svg className="w-4 h-4 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24c6.621 0 11.984-5.367 11.984-11.987C24.001 5.367 18.638.001 12.017.001z" />
-                            </svg>
-                            GitHub
                         </button>
                     </div>
 
