@@ -6,12 +6,12 @@ import { getAuth } from 'firebase/auth';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyBZlj_mWKLRCPmWKP4Gx4qwQXydAF1YFxI",
-    authDomain: "vista-mart-a165f.firebaseapp.com",
-    projectId: "vista-mart-a165f",
-    storageBucket: "vista-mart-a165f.firebasestorage.app",
-    messagingSenderId: "188459047468",
-    appId: "1:188459047468:web:96a83a71a3addb82b50f89"
+    apiKey: import.meta.env.VITE_apiKey,
+    authDomain: import.meta.env.VITE_authDomain,
+    projectId: import.meta.env.VITE_projectId,
+    storageBucket: import.meta.env.VITE_storageBucket,
+    messagingSenderId: import.meta.env.VITE_messagingSenderId,
+    appId: import.meta.env.VITE_appId
 };
 
 // Initialize Firebase
